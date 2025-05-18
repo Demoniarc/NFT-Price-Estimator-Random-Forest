@@ -1,0 +1,91 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+
+This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+
+Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+
+```{r}
+```
+
+
+```{r}
+data<-read.csv("BAYC_eth_volume_nb_traits.csv", sep=",")
+```
+
+```{r}
+data
+```
+
+
+```{r}
+library(dplyr)
+library(factoextra)
+library(ellipse)
+library(FactoMineR)
+library(scatterplot3d)
+
+```
+```{r}
+str(data)
+```
+```{r}
+data$prix_vente <- as.numeric(data$prix_vente)
+data$frais_royalty <- as.numeric(data$frais_royalty)
+data$frais_platforme <- as.numeric(data$frais_platforme)
+data$volume_opensea <- as.numeric(data$volume_opensea)
+data$prix_eth <- as.numeric(data$prix_eth)
+```
+
+```{r}
+str(data)
+```
+```{r}
+View(data)
+```
+
+
+```{r}
+res.pca <- PCA(data, graph = TRUE)
+fviz_pca_var(res.pca, col.var = "cos2",
+         	gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"),
+         	repel = TRUE # Évite le chevauchement de texte
+         	)
+```
+
+
+```{r}
+fviz_pca_ind (res.pca)
+fviz_pca_ind (res.pca, col.ind = "cos2",gradient.cols = c("#00AFBB", "#E7B800", "#FC4E07"), repel = TRUE, indices = 1:100 )
+
+```
+
+```{r}
+fviz_eig(res.pca, addlabels = TRUE, ylim = c(0, 50))
+```
+```{r}
+res <- hcut(data, k = 4, stand = TRUE)
+#fviz_dend(res, rect = TRUE, cex = 0.5, k_colors = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"))
+```
+```{r}
+df <- scale(data)
+set.seed(123)
+km.res <- kmeans(scale(data), 4, nstart = 25)
+fviz_cluster(km.res, data = df, palette = c("#00AFBB","#2E9FDF", "#E7B800", "#FC4E07"), geom = "point", ggtheme = theme_minimal(),main = "Partitioning Clustering Plot")
+```
+```{r}
+library(corrplot)
+cor(data)
+corrplot(cor(data))
+```
+```{r}
+
+```
+
+Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+
+When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+
+The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
